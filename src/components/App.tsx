@@ -35,8 +35,6 @@ const App = () => {
       },
     });
 
-    // console.log(result);
-
     setCode(result.outputFiles[0].text);
 
     try {
@@ -56,6 +54,7 @@ const App = () => {
         <button onClick={onClick}>Submit</button>
       </div>
       <pre>{code}</pre>
+      <iframe src='/test.html' title='test' />
     </div>
   );
 };
