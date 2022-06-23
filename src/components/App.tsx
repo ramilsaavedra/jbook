@@ -1,8 +1,10 @@
+import React from 'react';
 import * as esbuild from 'esbuild-wasm';
 import { useState, useEffect, useRef } from 'react';
 import { unpkgPathPlugin } from '../plugins/unpkg-path-plugin';
 import { fetchPlugin } from '../plugins/fetch-plugin';
 import CodeEditor from './CodeEditor';
+import { OnChange } from '@monaco-editor/react';
 
 const html = `
 <html>
@@ -39,6 +41,10 @@ const App = () => {
   useEffect(() => {
     startService();
   }, []);
+
+  const onChange: OnChange = (value, event) => {
+    console.log(value, event);
+  };
 
   const onClick = async () => {
     if (!ref.current) {
@@ -79,16 +85,16 @@ const App = () => {
 
   return (
     <div>
-      <CodeEditor />
-      <textarea
+      <CodeEditor onChange={onChange} />
+      {/* <textarea
         cols={50}
         rows={10}
         value={input}
         onChange={(e) => setInput(e.target.value)}
-      ></textarea>
-      <div>
+      ></textarea> */}
+      {/* <div>
         <button onClick={onClick}>Submit</button>
-      </div>
+      </div> */}
       <iframe
         title='code preview'
         ref={iframe}
