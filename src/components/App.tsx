@@ -3,6 +3,26 @@ import { useState, useEffect, useRef } from 'react';
 import { unpkgPathPlugin } from '../plugins/unpkg-path-plugin';
 import { fetchPlugin } from '../plugins/fetch-plugin';
 
+const html = `
+<html>
+  <head></head>
+  <body>
+    <!-- to render react app -->
+    <div id='root'></div>
+    <script>
+      window.addEventListener('message', (e) => {
+        try {
+          eval(e.data)
+        } catch(err) {
+          const root = document.getElementById('root');
+          root.innerHTML = '<div style="color: red"><h4>Runtime Error:</h4>' + ' ' + err + '</div>'
+        }
+      }, false)
+    </script>
+  </body>
+</html>
+`;
+
 const App = () => {
   const ref = useRef<any>();
   const iframe = useRef<any>();
@@ -24,6 +44,8 @@ const App = () => {
     if (!ref.current) {
       return;
     }
+
+    iframe.current.srcdoc = html;
 
     let result;
 
@@ -54,26 +76,6 @@ const App = () => {
       }
     }
   };
-
-  const html = `
-  <html>
-    <head></head>
-    <body>
-      <!-- to render react app -->
-      <div id='root'></div>
-      <script>
-        window.addEventListener('message', (e) => {
-          try {
-            eval(e.data)
-          } catch(err) {
-            const root = document.getElementById('root');
-            root.innerHTML = '<div style="color: red"><h4>Runtime Error:</h4>' + ' ' + err + '</div>'
-          }
-        }, false)
-      </script>
-    </body>
-  </html>
-`;
 
   return (
     <div>
