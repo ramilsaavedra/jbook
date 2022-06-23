@@ -9,6 +9,7 @@ interface CodeEditorProps {
 const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
   return (
     <Editor
+      theme='vs-dark'
       height='50vh'
       defaultLanguage='javascript'
       defaultValue='// some comment'
