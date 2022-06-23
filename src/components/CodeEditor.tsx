@@ -9,6 +9,12 @@ interface CodeEditorProps {
 const CodeEditor: React.FC<CodeEditorProps> = ({ onChange }) => {
   return (
     <Editor
+      options={{
+        wordWrap: 'on',
+        minimap: {
+          enabled: false,
+        },
+      }}
       theme='vs-dark'
       height='50vh'
       defaultLanguage='javascript'
