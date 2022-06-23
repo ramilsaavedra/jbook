@@ -5,6 +5,7 @@ import { fetchPlugin } from '../plugins/fetch-plugin';
 
 const App = () => {
   const ref = useRef<any>();
+  const iframe = useRef<any>();
   const [input, setInput] = useState('');
   const [code, setCode] = useState('');
 
@@ -24,29 +25,61 @@ const App = () => {
       return;
     }
 
-    const result = await ref.current.build({
-      entryPoints: ['index.js'],
-      bundle: true,
-      write: false,
-      plugins: [unpkgPathPlugin(), fetchPlugin(input)],
-      define: {
-        'process.env.NODE_ENV': '"production"',
-        global: 'window',
-      },
-    });
-
-    setCode(result.outputFiles[0].text);
+    let result;
 
     try {
-      eval(result.outputFiles[0].text);
-    } catch (error) {
-      console.log(error);
+      result = await ref.current.build({
+        entryPoints: ['index.js'],
+        bundle: true,
+        write: false,
+        plugins: [unpkgPathPlugin(), fetchPlugin(input)],
+        define: {
+          'process.env.NODE_ENV': '"production"',
+          global: 'window',
+        },
+      });
+
+      iframe.current.contentWindow.postMessage(result.outputFiles[0].text, '*');
+    } catch (err) {
+      if (err instanceof Error) {
+        iframe.current.contentWindow.postMessage(
+          `
+        (() => {
+          const root = document.getElementById('root');
+          root.innerHTML = '<div style="color: red"><h4>Runtime Error:</h4>' + ' ' + ${err.message} + '</div>'
+        })();
+        `,
+          '*'
+        );
+      }
     }
   };
+
+  const html = `
+  <html>
+    <head></head>
+    <body>
+      <!-- to render react app -->
+      <div id='root'></div>
+      <script>
+        window.addEventListener('message', (e) => {
+          try {
+            eval(e.data)
+          } catch(err) {
+            const root = document.getElementById('root');
+            root.innerHTML = '<div style="color: red"><h4>Runtime Error:</h4>' + ' ' + err + '</div>'
+          }
+        }, false)
+      </script>
+    </body>
+  </html>
+`;
 
   return (
     <div>
       <textarea
+        cols={50}
+        rows={10}
         value={input}
         onChange={(e) => setInput(e.target.value)}
       ></textarea>
@@ -54,7 +87,7 @@ const App = () => {
         <button onClick={onClick}>Submit</button>
       </div>
       <pre>{code}</pre>
-      <iframe src='/test.html' title='test' />
+      <iframe ref={iframe} sandbox='allow-scripts' srcDoc={html} title='test' />
     </div>
   );
 };
