@@ -49,7 +49,7 @@ const App = () => {
       timeout = setTimeout(() => {
         console.log('bundle');
         if (input) {
-          onClick(input);
+          compile(input);
         }
       }, 500);
     }
@@ -59,11 +59,11 @@ const App = () => {
     };
   }, [input]);
 
-  const onChange: OnChange = (value, event) => {
+  const onChange: OnChange = (value) => {
     setInput(value);
   };
 
-  const onClick = async (input: string) => {
+  const compile = async (input: string) => {
     if (!ref.current) {
       return;
     }
@@ -103,15 +103,6 @@ const App = () => {
   return (
     <div>
       <CodeEditor onChange={onChange} />
-      {/* <textarea
-        cols={50}
-        rows={10}
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-      ></textarea> */}
-      {/* <div>
-        <button onClick={onClick}>Submit</button>
-      </div> */}
       <iframe
         title='code preview'
         ref={iframe}
