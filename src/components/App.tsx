@@ -1,6 +1,5 @@
-import React from 'react';
 import * as esbuild from 'esbuild-wasm';
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { unpkgPathPlugin } from '../plugins/unpkg-path-plugin';
 import { fetchPlugin } from '../plugins/fetch-plugin';
 import CodeEditor from './CodeEditor';
@@ -29,7 +28,7 @@ const html = `
 const App = () => {
   const ref = useRef<any>();
   const iframe = useRef<any>();
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState<string | undefined>('');
 
   const startService = async () => {
     ref.current = await esbuild.startService({
@@ -42,11 +41,29 @@ const App = () => {
     startService();
   }, []);
 
+  // debounce
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
+
+    if (input) {
+      timeout = setTimeout(() => {
+        console.log('bundle');
+        if (input) {
+          onClick(input);
+        }
+      }, 500);
+    }
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [input]);
+
   const onChange: OnChange = (value, event) => {
-    console.log(value, event);
+    setInput(value);
   };
 
-  const onClick = async () => {
+  const onClick = async (input: string) => {
     if (!ref.current) {
       return;
     }
