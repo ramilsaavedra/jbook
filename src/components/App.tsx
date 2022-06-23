@@ -102,7 +102,7 @@ const App = () => {
 
   return (
     <div>
-      <CodeEditor onChange={onChange} />
+      <CodeEditor defaultValue='const a = 1' onChange={onChange} />
       <iframe
         title='code preview'
         ref={iframe}
