@@ -27,13 +27,13 @@ const html = `
 `;
 
 const App = () => {
-  const ref = useRef<Service>();
+  const service = useRef<Service>();
   const iframe = useRef<HTMLIFrameElement>(null);
   const timeout = useRef<NodeJS.Timeout>();
   const [input, setInput] = useState<string | undefined>('');
 
   const startService = async () => {
-    ref.current = await esbuild.startService({
+    service.current = await esbuild.startService({
       worker: true,
       wasmURL: 'https://unpkg.com/esbuild-wasm@0.8.27/esbuild.wasm',
     });
@@ -64,7 +64,7 @@ const App = () => {
   };
 
   const compile = async (input: string) => {
-    if (!ref.current || !iframe.current || !iframe.current.contentWindow) {
+    if (!service.current || !iframe.current || !iframe.current.contentWindow) {
       return;
     }
 
@@ -73,7 +73,7 @@ const App = () => {
     let result;
 
     try {
-      result = await ref.current.build({
+      result = await service.current.build({
         entryPoints: ['index.js'],
         bundle: true,
         write: false,
