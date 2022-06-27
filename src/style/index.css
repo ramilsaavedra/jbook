@@ -1,0 +1,32 @@
+body {
+  margin: 0;
+}
+
+.editor {
+  position: relative;
+}
+
+.button-format {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  margin: 10px;
+  padding: 10px 20px;
+  border-radius: 2px;
+  border-color: transparent;
+  background-color: #c84b31;
+  color: #ecdbba;
+  cursor: pointer;
+  transform: scale(0);
+  transition: all 0.2s;
+  transition-property: color, transform;
+}
+
+.button-format:active {
+  background-color: #973926;
+}
+
+.editor:hover .button-format {
+  transform: scale(1);
+}
