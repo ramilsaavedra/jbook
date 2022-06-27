@@ -1,4 +1,5 @@
 import * as esbuild from 'esbuild-wasm';
+import { Service } from 'esbuild-wasm';
 import React, { useState, useEffect, useRef } from 'react';
 import { unpkgPathPlugin } from '../plugins/unpkg-path-plugin';
 import { fetchPlugin } from '../plugins/fetch-plugin';
@@ -26,8 +27,9 @@ const html = `
 `;
 
 const App = () => {
-  const ref = useRef<any>();
-  const iframe = useRef<any>();
+  const ref = useRef<Service>();
+  const iframe = useRef<HTMLIFrameElement>(null);
+  const timeout = useRef<NodeJS.Timeout>();
   const [input, setInput] = useState<string | undefined>('');
 
   const startService = async () => {
@@ -43,10 +45,8 @@ const App = () => {
 
   // debounce
   useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout>;
-
     if (input) {
-      timeout = setTimeout(() => {
+      timeout.current = setTimeout(() => {
         console.log('bundle');
         if (input) {
           compile(input);
@@ -55,7 +55,7 @@ const App = () => {
     }
 
     return () => {
-      clearTimeout(timeout);
+      clearTimeout(timeout.current as ReturnType<typeof setTimeout>);
     };
   }, [input]);
 
@@ -64,7 +64,7 @@ const App = () => {
   };
 
   const compile = async (input: string) => {
-    if (!ref.current) {
+    if (!ref.current || !iframe.current || !iframe.current.contentWindow) {
       return;
     }
 
