@@ -7,7 +7,7 @@ import parser from 'prettier/parser-babel';
 const CodeEditor: React.FC<EditorProps> = ({ onChange, defaultValue }) => {
   const editorref = useRef<monaco.editor.IStandaloneCodeEditor>();
 
-  const onMount: OnMount = (editor, monaco) => {
+  const onMount: OnMount = (editor) => {
     editorref.current = editor;
   };
 
